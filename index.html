@@ -1,10 +1,184 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fraeymark Community Time Zones</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #eee;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 30px;
+    }
+
+    .timezone {
+      background: #1c1c1c;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .timezone-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .timezone h2 {
+      margin: 0;
+    }
+
+    .clock {
+      font-size: 28px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .members {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #333;
+    }
+
+    .member {
+      padding: 4px 0;
+    }
+
+    .loading {
+      text-align: center;
+      color: #aaa;
+    }
+  </style>
 </head>
+
 <body>
+
   <h1>🌎 Fraeymark Community Time Zones</h1>
-  <p>Coming soon...</p>
+
+  <div class="subtitle">
+    See what time it is for everyone in the community.
+  </div>
+
+  <div id="timezoneList" class="loading">
+    Loading time zones...
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const supabaseUrl = "https://motmsqjdghsqwwgjekad.supabase.co";
+    const supabaseKey = "sb_publishable_Ry6z3_4Pt9p3fKy7aK27hg_CFE1U_u9";
+
+    const client = window.supabase.createClient(
+      supabaseUrl,
+      supabaseKey
+    );
+
+    let timeZones = [];
+
+    async function loadTimeZones() {
+      const list = document.getElementById("timezoneList");
+
+      const { data, error } = await client
+        .from("time_zones")
+        .select("timezone, members")
+        .order("id");
+
+      if (error) {
+        list.textContent = "Unable to load time zones.";
+        console.error(error);
+        return;
+      }
+
+      timeZones = data;
+
+      displayTimeZones();
+    }
+
+    function displayTimeZones() {
+      const list = document.getElementById("timezoneList");
+
+      list.innerHTML = "";
+
+      timeZones.forEach(zone => {
+        const div = document.createElement("div");
+        div.className = "timezone";
+
+        const members = (zone.members || "")
+          .split("\n")
+          .map(name => name.trim())
+          .filter(name => name !== "");
+
+        div.innerHTML = `
+          <div class="timezone-header">
+            <h2>${escapeHtml(zone.timezone)}</h2>
+            <div class="clock" id="clock-${escapeHtml(zone.timezone)}"></div>
+          </div>
+
+          <div class="members">
+            ${
+              members.length
+                ? members.map(name => `
+                    <div class="member">${escapeHtml(name)}</div>
+                  `).join("")
+                : "<div>No members listed.</div>"
+            }
+          </div>
+        `;
+
+        list.appendChild(div);
+      });
+
+      updateClocks();
+    }
+
+    function updateClocks() {
+      timeZones.forEach(zone => {
+        const clock = document.getElementById(
+          "clock-" + zone.timezone
+        );
+
+        if (!clock) return;
+
+        const now = new Date();
+
+        clock.textContent = new Intl.DateTimeFormat("en-US", {
+          timeZone: zone.timezone,
+          hour: "numeric",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true
+        }).format(now);
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    loadTimeZones();
+
+    setInterval(updateClocks, 1000);
+  </script>
+
 </body>
 </html>
