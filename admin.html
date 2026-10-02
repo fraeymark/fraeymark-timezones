@@ -46,8 +46,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    const supabaseUrl = localStorage.getItem("supabaseUrl");
-    const supabaseKey = localStorage.getItem("supabaseKey");
+   const supabaseUrl = "YOUR-SUPABASE-URL";
+const supabaseKey = "YOUR-PUBLISHABLE-KEY";
 
     if (!supabaseUrl || !supabaseKey) {
       document.getElementById("loginMessage").textContent =
