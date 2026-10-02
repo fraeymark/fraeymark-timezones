@@ -208,10 +208,10 @@
         timeZoneName: "shortOffset"
       }).formatToParts(now).find(p => p.type === "timeZoneName")?.value;
 
-      abbreviation =
-        currentOffset === julOffset
-          ? abbreviations[zone.timezone][1]
-          : abbreviations[zone.timezone][0];
+     abbreviation =
+  currentOffset === janOffset
+    ? abbreviations[zone.timezone][0]
+    : abbreviations[zone.timezone][1];
     }
 
     clock.textContent =
