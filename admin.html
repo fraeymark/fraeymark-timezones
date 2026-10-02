@@ -5,6 +5,27 @@
 </head>
 <body>
   <h1>Fraeymark Time Zones Admin</h1>
-  <p>Admin panel coming soon...</p>
+
+  <p>This is the admin panel.</p>
+
+  <label>Supabase URL:</label><br>
+  <input type="text" id="supabaseUrl" style="width:500px;"><br><br>
+
+  <label>Supabase Publishable Key:</label><br>
+  <input type="password" id="supabaseKey" style="width:500px;"><br><br>
+
+  <button onclick="saveSettings()">Save Settings</button>
+
+  <script>
+    function saveSettings() {
+      const url = document.getElementById("supabaseUrl").value;
+      const key = document.getElementById("supabaseKey").value;
+
+      localStorage.setItem("supabaseUrl", url);
+      localStorage.setItem("supabaseKey", key);
+
+      alert("Settings saved.");
+    }
+  </script>
 </body>
 </html>
