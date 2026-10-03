@@ -127,6 +127,13 @@
     );
 
     document.getElementById("loginButton").addEventListener("click", login);
+    client.auth.getSession().then(({ data }) => {
+  if (data.session) {
+    document.getElementById("loginArea").style.display = "none";
+    document.getElementById("adminArea").style.display = "block";
+    loadTimeZones();
+  }
+});
     document.getElementById("logoutButton").addEventListener("click", logout);
     document.getElementById("addButton").addEventListener("click", addTimeZone);
     document.getElementById("saveMembersButton").addEventListener("click", saveMembers);
